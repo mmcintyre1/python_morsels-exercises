@@ -1,26 +1,32 @@
 import configparser
 import csv
-from os import PathLike
 import sys
 
 
-def read_config(config_location: PathLike) -> configparser.ConfigParser:
-    """
-    Reads a config file.
-    :param config_location: location of a config file
-    :return: a configparser object
-    """
+def read_config(config_location):
     config = configparser.ConfigParser()
     config.read(config_location)
     return config
 
 
 def output_csv(data, output_location):
-    pass
+    with open(output_location, 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerows(data)
 
 
-def run(config_location, output_location):
-    pass
+def run(config_location, output_location, collapsed=False):
+    config = read_config(config_location)
+    if collapsed:
+        data = []
+
+    else:
+        data = [
+            [section, k, config[section][k]] for section in config.sections()
+            for k in config[section]
+        ]
+
+    output_csv(data, output_location)
 
 
 def main(sys_argv):

@@ -32,7 +32,7 @@ class INI2CSV(unittest.TestCase):
             *.js,indent_size,2
         """).lstrip()
         with make_file(contents) as ini_file, make_file() as csv_file:
-            stdout = run_program('ini2csv.py', args=[ini_file, csv_file])
+            stdout = run_program('../ini2csv.py', args=[ini_file, csv_file])
             self.assertEqual(stdout, '')
             with open(csv_file) as csv:
                 output = csv.read()
