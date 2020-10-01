@@ -39,7 +39,7 @@ class INI2CSV(unittest.TestCase):
         self.assertEqual(expected, output)
 
     # To test the Bonus part of this exercise, comment out the following line
-    @unittest.expectedFailure
+    # @unittest.expectedFailure
     def test_collapsed(self):
         contents = dedent("""
             [*.py]
@@ -56,7 +56,7 @@ class INI2CSV(unittest.TestCase):
             *.js,space,2
         """).lstrip()
         with make_file(contents) as ini_file, make_file() as csv_file:
-            run_program('ini2csv.py', args=['--collapsed', ini_file, csv_file])
+            run_program('../ini2csv.py', args=['--collapsed', ini_file, csv_file])
             with open(csv_file) as csv:
                 output = csv.read()
         self.assertEqual(expected, output)
