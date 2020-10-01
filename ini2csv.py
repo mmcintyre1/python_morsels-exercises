@@ -1,18 +1,7 @@
 import argparse
-import configparser
+from configparser import ConfigParser
 import csv
-
-
-def read_config(config_location):
-    config = configparser.ConfigParser()
-    config.read(config_location)
-    return config
-
-
-def output_csv(data, output_location):
-    with open(output_location, 'w', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerows(data)
+from functools import partial
 
 
 def get_config_keys(config):
@@ -30,8 +19,10 @@ def collapse_config(config):
     return data
 
 
-def run(config_location, output_location, collapsed=False):
-    config = read_config(config_location)
+def run(ini_file, csv_file, collapsed=False):
+    config = ConfigParser()
+    config.read_file(ini_file)
+
     if collapsed:
         data = collapse_config(config)
     else:
@@ -40,18 +31,24 @@ def run(config_location, output_location, collapsed=False):
             for k in config[section]
         ]
 
-    output_csv(data, output_location)
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerows(data)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('input')
-    parser.add_argument('output')
+    # we can use this, but windows doesn't like the lack of newline for the csv file
+    # parser.add_argument('ini_file', argparse.FileType('rt'))
+
+    # with the partial, it only applies partial arguments but allows us
+    # to open a file when invoked
+    parser.add_argument('ini_file', type=partial(open, mode='rt', newline=''))
+    parser.add_argument('csv_file', type=partial(open, mode='wt', newline=''))
     parser.add_argument('--collapsed', action='store_true')
 
     args = parser.parse_args()
 
-    run(args.input, args.output, args.collapsed)
+    run(args.ini_file, args.csv_file, args.collapsed)
 
 
 if __name__ == "__main__":
